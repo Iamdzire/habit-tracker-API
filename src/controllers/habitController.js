@@ -30,7 +30,7 @@ export const createHabit = async (req, res) => {
 
 export const getAllHabitsByOwner = async (req, res) => {
     try {
-        const {page, limit, name, description, sort} = req.query
+        const {page, limit, name, description, frequency, sort} = req.query
         const pageNumber = Number(page) || 1
         const limitNumber = Number(limit) || 4
         const skip = (pageNumber - 1) * limitNumber
@@ -42,8 +42,11 @@ export const getAllHabitsByOwner = async (req, res) => {
         if(description){
             filter.description = {$regex: description, $options: 'i'}
         }
+        if(frequency){
+            filter.frequency = {$regex: frequency, $options: 'i'}
+        }
 
-        const sortOption = {name: 1} // Default: Sort by name
+        let sortOption = {name: 1} // Default: Sort by name
         if(sort === 'description'){
             sortOption = {description: 1}
         }

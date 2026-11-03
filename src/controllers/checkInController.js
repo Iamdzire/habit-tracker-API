@@ -42,7 +42,7 @@ export const createCheckInByOwner = async (req, res) => {
 
 export const getAllCheckInsByOwner = async (req, res) => {
     try {
-        const {page, limit, date, note, sort} = req.query
+        const {page, limit, note, sort} = req.query
         const pageNumber = Number(page) || 1
         const limitNumber = Number(limit) || 4
         const skip = (pageNumber - 1) * limitNumber
@@ -52,9 +52,9 @@ export const getAllCheckInsByOwner = async (req, res) => {
             filter.note = {$regex: note, $options: 'i'}
         }
 
-        const sortOption = {date: -1} // Default: Sort by newest to oldest
-        if(sort === 'name'){
-            sortOption = {name: 1}
+        let sortOption = {date: -1} // Default: Sort by newest to oldest
+        if(sort === 'note'){
+            sortOption = {note: 1}
         }
 
         const checkIns = await checkInModel
