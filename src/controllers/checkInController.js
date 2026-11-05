@@ -53,9 +53,9 @@ export const getAllCheckInsByOwner = async (req, res) => {
             filter.note = {$regex: note, $options: 'i'}
         }
 
-        let sortOption = {date: -1} // Default: Sort by newest to oldest
+        let sortOption = {date: -1, _id: -1} // Default: Sort by newest to oldest
         if(sort === 'note'){
-            sortOption = {note: 1}
+            sortOption = {note: 1, _id: 1}
         }
 
         const checkIns = await checkInModel

@@ -46,9 +46,11 @@ export const getAllHabitsByOwner = async (req, res) => {
             filter.frequency = {$regex: frequency, $options: 'i'}
         }
 
-        let sortOption = {name: 1} // Default: Sort by name
+        let sortOption = {name: 1, _id: 1} // Default: Sort by name
         if(sort === 'description'){
-            sortOption = {description: 1}
+            sortOption = {description: 1, _id: 1}
+        }if(sort === 'frequency'){
+            sortOption = {frequency: 1, _id: 1}
         }
 
         const habits = await habitModel
