@@ -4,7 +4,7 @@ import habitModel from '../models/habitModel.js'
 export const createCheckInByOwner = async (req, res) => {
     try {
         const {habit, date, note} = req.body
-        if(!habit){
+        if(!habit || !date){
             return res.status(400).json({
                 error: "All required fields must be filled."
             })
@@ -20,10 +20,11 @@ export const createCheckInByOwner = async (req, res) => {
                 error: "User not authorized."
             })
         }
+
         const newCheckIn = new checkInModel({
             habit,
             owner: req.user._id,
-            date: date || Date.now(),
+            date,
             note
         })
         await newCheckIn.save()
