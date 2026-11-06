@@ -5,8 +5,9 @@ import {
     getAllHabitsByOwner,
     getSingleHabitByOwner,
     updateHabitByOwner,
-    deleteHabitByOwner
+    deleteHabitByOwner,
 } from '../controllers/habitController.js'
+import {getCheckInsForHabitByOwner} from '../controllers/checkInController.js'
 
 const router = express.Router()
 
@@ -16,5 +17,8 @@ router.get('/', getAllHabitsByOwner)
 router.get('/:id', getSingleHabitByOwner)
 router.put('/:id', updateHabitByOwner)
 router.delete('/:id', deleteHabitByOwner)
+
+// Nested Routes
+router.get('/:id/check-ins', getCheckInsForHabitByOwner)
 
 export default router

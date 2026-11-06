@@ -1,7 +1,7 @@
 import express from 'express'
 import requireAuth from '../middlewares/authMiddleware.js'
 import {
-    createCheckInByOwner,
+    createCheckInForHabitByOwner,
     getAllCheckInsByOwner,
     getSingleCheckInByOwner,
     updateCheckInByOwner,
@@ -11,7 +11,7 @@ import {
 const router = express.Router()
 
 router.use(requireAuth)
-router.post('/', createCheckInByOwner)
+router.post('/', createCheckInForHabitByOwner)
 router.get('/', getAllCheckInsByOwner)
 router.get('/:id', getSingleCheckInByOwner)
 router.put('/:id', updateCheckInByOwner)
