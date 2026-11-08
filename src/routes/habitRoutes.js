@@ -1,5 +1,5 @@
 import express from 'express'
-import requireAuth from '../middlewares/authMiddleware.js'
+import {requireAuth} from '../middlewares/authMiddleware.js'
 import {
     createHabit,
     getAllHabitsByOwner,

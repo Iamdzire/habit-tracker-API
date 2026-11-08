@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken'
 import authModel from '../models/authModel.js'
 
-const requireAuth = async (req, res, next) => {
+export const requireAuth = async (req, res, next) => {
     try {
         let token
         const authHeader = req.headers.authorization
@@ -34,4 +34,15 @@ const requireAuth = async (req, res, next) => {
 }
 
 
-export default requireAuth
+export const requireRole = (...allowedRoles) => {
+    return (req, res, next) => {
+        if(!req.user || !allowedRoles.includes(req.user.role)){
+            return res.status(403).json({
+                error: "Permission insufficient."
+            })
+        }
+        next()
+    }
+}
+
+
