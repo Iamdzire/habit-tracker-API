@@ -34,7 +34,7 @@ export const createUser = async (req, res) => {
         return res.status(201).json({
             message: "User created successfully.",
             data: {
-                id: newUser._id,
+                _id: newUser._id,
                 name: newUser.name,
                 email: newUser.email,
                 role: newUser.role
@@ -165,7 +165,7 @@ export const getSingleUser = async (req, res) => {
                 error: "User not found."
             })
         }
-        if(req.user._id.toString() !== user._id.toString() || req.user.role !== 'admin'){
+        if(req.user._id.toString() !== user._id.toString() && req.user.role !== 'admin'){
             return res.status(403).json({
                 error: "Permission insufficient."
             })
@@ -186,14 +186,16 @@ export const updateUser = async (req, res) => {
     try {
         const {id} = req.params
         const {name, email, password} = req.body
-        const user = await authModel.findById(id)
+        const user = await authModel
+        .findById(id)
+        .select('-password')
 
         if(!user){
             return res.status(404).json({
                 error: "User not found."
             })
         }
-        if(req.user._id.toString() !== user._id.toString() || req.user.role !== 'admin'){
+        if(req.user._id.toString() !== user._id.toString() && req.user.role !== 'admin'){
             return res.status(403).json({
                 error: "Permission insufficient"
             })
@@ -227,9 +229,13 @@ export const updateUser = async (req, res) => {
         user.password = putPassword
         await user.save()
 
+        const updatedUser = await authModel
+        .findById(id)
+        .select('-password')
+
         return res.status(200).json({
             message: "User updated successfully.",
-            data: user
+            data: updatedUser
         })
     }catch(error){
         return res.status(500).json({
@@ -251,7 +257,7 @@ export const deleteUser = async (req, res) => {
                 error: "User not found."
             })
         }
-        if(req.user._id.toString() !== user._id.toString() || req.user.role !== 'admin'){
+        if(req.user._id.toString() !== user._id.toString() && req.user.role !== 'admin'){
             return res.status(403).json({
                 error: "Permission insufficient."
             })
@@ -259,7 +265,8 @@ export const deleteUser = async (req, res) => {
         await authModel.findByIdAndDelete(id)
 
         return res.status(200).json({
-            error: "User deleted successfully."
+            error: "User deleted successfully.",
+            data: user
         })
     }catch(error){
         return res.status(500).json({
