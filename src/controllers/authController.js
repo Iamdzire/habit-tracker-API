@@ -192,7 +192,6 @@ export const updateUser = async (req, res) => {
         const {name, email, password, confirmPassword} = req.body
         const user = await authModel
         .findById(id)
-        .select('-password')
 
         if(!user){
             return res.status(404).json({
@@ -211,7 +210,8 @@ export const updateUser = async (req, res) => {
         if(name){
             putName = name
         }
-        if(email !== putEmail){
+        if(email){
+            if(email !== user.email){
             const existingEmail = await authModel.findOne({email})
             if(existingEmail){
                 return res.status(400).json({
@@ -219,11 +219,17 @@ export const updateUser = async (req, res) => {
                 })
             }
             putEmail = email
-        }
+        }}
         if(email === putEmail){
             putEmail = email
         }
-        if(password && password === confirmPassword){
+        if(password){
+            if(password.length <= 5){
+            return res.status(400).json({
+                error: "Password must be at least 6 characters in length."
+            })
+        }
+            if(password === confirmPassword){
             const salt = await bcrypt.genSalt(10)
             const hashedPassword = await bcrypt.hash(password, salt)
             putPassword = hashedPassword
@@ -232,6 +238,12 @@ export const updateUser = async (req, res) => {
                 error: "Passwords do not match."
             })
         }
+    }
+    if(password !== confirmPassword){
+        return res.status(400).json({
+            error: "Passwords do not match."
+        })
+    }
         user.name = putName
         user.email = putEmail
         user.password = putPassword

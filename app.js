@@ -1,4 +1,6 @@
 import express from 'express'
+import helmet from 'helmet'
+import rateLimit from 'express-rate-limit'
 import cors from 'cors'
 import authRoutes from './src/routes/authRoutes.js'
 import habitRoutes from './src/routes/habitRoutes.js'
@@ -9,6 +11,17 @@ const app = express()
 
 app.use(express.json())
 app.use(cors())
+app.use(helmet())
+
+const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 100, // Max requests per IP
+    message: {
+        error: "Too many requests, please try again later."
+    }
+})
+
+app.use(limiter)
 
 // Health check
 app.get('/', (req, res) => res.send("Habit Tracker API running!"))

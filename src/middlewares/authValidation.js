@@ -43,30 +43,3 @@ export const loginUserRules = [
     .notEmpty()
     .withMessage('Password is required.')
 ]
-
-
-export const updateUserRules = [
-    body('name')
-    .optional()
-    .trim(),
-
-    body('email')
-    .optional()
-    .trim()
-    .isEmail()
-    .withMessage('Please provide a valid email.'),
-
-    body('password')
-    .optional()
-    .isLength({min: 6})
-    .withMessage('Password must be at least 6 characters in length.'),
-
-    body('confirmPassword')
-    .optional()
-    .custom((value, {req}) => {
-        if(value !== req.body.password){
-            throw new Error('Passwords do not match.')
-        }
-        return true
-    })
-]
