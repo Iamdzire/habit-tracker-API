@@ -1,10 +1,10 @@
 import mongoose from 'mongoose'
 
 const habitSchema = mongoose.Schema({
-    name: {type: String, required: [true, "Habit name is required"], trim: true},
+    name: {type: String, required: [true, "Name is required"], trim: true},
     description: {type: String, trim: true},
-    frequency: {type: String, required: [true, "Habit frequency is required"], trim: true, enum: ["Daily", "Weekly"]},
-    owner: {type: mongoose.Schema.Types.ObjectId, required: [true, "Habit owner is required"], ref: 'Auth'}
+    frequency: {type: String, required: [true, "Frequency is required"], enum: ["Daily", "Weekly"]},
+    owner: {type: mongoose.Schema.Types.ObjectId, required: [true, "Owner is required"], ref: 'Auth'}
 })
 
 export default mongoose.model('Habit', habitSchema)

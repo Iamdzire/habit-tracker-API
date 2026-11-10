@@ -15,12 +15,12 @@ export const createUser = async (req, res) => {
                 error: "Passwords do not match."
             })
         }
-        const existingUser = await authModel.findOne({email})
+        /* const existingUser = await authModel.findOne({email})
         if(existingUser){
             return res.status(400).json({
-                error: "Email already exists."
+                error: "A User with this email already exists."
             })
-        }
+        } */
         const salt = await bcrypt.genSalt(10)
         const hashedPassword = await bcrypt.hash(password, salt)
 
@@ -31,16 +31,20 @@ export const createUser = async (req, res) => {
         })
         await newUser.save()
 
+        const newUserDetails = await authModel
+        .findById(newUser._id)
+        .select('-password')
+
         return res.status(201).json({
             message: "User created successfully.",
-            data: {
-                _id: newUser._id,
-                name: newUser.name,
-                email: newUser.email,
-                role: newUser.role
-            }
+            data: newUserDetails
         })
     }catch(error){
+        if(error.code === 11000){
+            return res.status(400).json({
+                error: "A user with this email already exists." // See how i can handle this error in two different ways
+            })
+        }
         return res.status(500).json({
             error: error.message
         })
@@ -185,7 +189,7 @@ export const getSingleUser = async (req, res) => {
 export const updateUser = async (req, res) => {
     try {
         const {id} = req.params
-        const {name, email, password} = req.body
+        const {name, email, password, confirmPassword} = req.body
         const user = await authModel
         .findById(id)
         .select('-password')
@@ -219,10 +223,14 @@ export const updateUser = async (req, res) => {
         if(email === putEmail){
             putEmail = email
         }
-        if(password){
+        if(password && password === confirmPassword){
             const salt = await bcrypt.genSalt(10)
             const hashedPassword = await bcrypt.hash(password, salt)
             putPassword = hashedPassword
+        }else{
+            return res.status(400).json({
+                error: "Passwords do not match."
+            })
         }
         user.name = putName
         user.email = putEmail

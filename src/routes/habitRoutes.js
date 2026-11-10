@@ -1,5 +1,7 @@
 import express from 'express'
 import {requireAuth} from '../middlewares/authMiddleware.js'
+import {createHabitRules} from '../middlewares/habitValidation.js'
+import {validate} from '../middlewares/validate.js'
 import {
     createHabit,
     getAllHabitsByOwner,
@@ -12,7 +14,7 @@ import {getCheckInsForHabitByOwner} from '../controllers/checkInController.js'
 const router = express.Router()
 
 router.use(requireAuth)
-router.post('/', createHabit)
+router.post('/', createHabitRules, validate, createHabit)
 router.get('/', getAllHabitsByOwner)
 router.get('/:id', getSingleHabitByOwner)
 router.put('/:id', updateHabitByOwner)

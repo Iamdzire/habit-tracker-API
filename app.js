@@ -20,7 +20,7 @@ app.use('/api/check-ins', checkInRoutes)
 
 // 404 Handler
 app.use((req, res) => res.status(404).json({
-    error: "Route not found."
+    error: "Route " + req.method + req.url + " not found."
 }))
 
 export default app
