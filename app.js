@@ -2,6 +2,7 @@ import express from 'express'
 import helmet from 'helmet'
 import rateLimit from 'express-rate-limit'
 import cors from 'cors'
+import morgan from 'morgan'
 import authRoutes from './src/routes/authRoutes.js'
 import habitRoutes from './src/routes/habitRoutes.js'
 import checkInRoutes from './src/routes/checkInRoutes.js'
@@ -22,6 +23,7 @@ const limiter = rateLimit({
 })
 
 app.use(limiter)
+app.use(morgan('dev'))
 
 // Health check
 app.get('/', (req, res) => res.send("Habit Tracker API running!"))
