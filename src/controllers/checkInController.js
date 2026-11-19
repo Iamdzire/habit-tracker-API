@@ -193,13 +193,23 @@ export const getCheckInStatsByOwner = async (req, res) => {
             {$sort: {totalCheckIns: -1, habitId: 1}},
             {$skip: skip},
             {$limit: limitNumber}
-        ])
-        if(!stats){
+        ]) 
+        if(stats.length === 0){
             return res.status(404).json({
                 error: "No check-in stats available."
             })
         }
-        const total = await checkInModel.countDocuments(filter)
+        const totalGroups = await checkInModel.aggregate([
+            {$match: filter},
+            {$group:
+                {
+                    _id: '$habit',
+                    totalCheckIn: {$sum: 1}
+                }
+            },
+            {$count: 'habit'}
+        ])
+        const total = totalGroups[0].habit
         const totalPages = Math.ceil(total / limitNumber)
         return res.status(200).json({
             message: "Check-in stats fetched successfully.",
