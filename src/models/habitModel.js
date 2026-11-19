@@ -7,4 +7,8 @@ const habitSchema = mongoose.Schema({
     owner: {type: mongoose.Schema.Types.ObjectId, required: [true, "Owner is required"], ref: 'Auth'}
 })
 
+habitSchema.index({
+    owner: 1, name: 1
+}, {unique: true})
+
 export default mongoose.model('Habit', habitSchema)

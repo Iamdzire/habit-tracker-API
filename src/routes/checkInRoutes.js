@@ -3,9 +3,10 @@ import {requireAuth} from '../middlewares/authMiddleware.js'
 import {
     createCheckInForHabitByOwner,
     getAllCheckInsByOwner,
+    getCheckInStatsByOwner,
     getSingleCheckInByOwner,
     updateCheckInByOwner,
-    deleteCheckInByOwner
+    deleteCheckInByOwner,
 } from '../controllers/checkInController.js'
 
 const router = express.Router()
@@ -13,8 +14,10 @@ const router = express.Router()
 router.use(requireAuth)
 router.post('/', createCheckInForHabitByOwner)
 router.get('/', getAllCheckInsByOwner)
+router.get('/stats', getCheckInStatsByOwner)
 router.get('/:id', getSingleCheckInByOwner)
 router.put('/:id', updateCheckInByOwner)
 router.delete('/:id', deleteCheckInByOwner)
+
 
 export default router

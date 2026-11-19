@@ -21,6 +21,11 @@ export const createHabit = async (req, res) => {
             data: newHabit
         })
     } catch (error) {
+        if(error.code === 11000){
+            return res.status(400).json({
+                error: "A habit with this same name already exists."
+            })
+        }
         return res.status(500).json({
             error: error.message
         })

@@ -10,7 +10,7 @@ export const createHabitRules = [
     .notEmpty()
     .withMessage('Frequency is required')
     .isIn(['Daily', 'Weekly'])
-    .withMessage('Frequency mube be Daily or Weekly.'),
+    .withMessage('Frequency must be Daily or Weekly.'),
 
     body('description')
     .optional()

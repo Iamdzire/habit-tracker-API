@@ -155,6 +155,68 @@ export const getCheckInsForHabitByOwner = async (req, res) => {
 }
 
 
+export const getCheckInStatsByOwner = async (req, res) => {
+    try {
+        const {page, limit, note} = req.query
+
+        const pageNumber = Number(page) || 1
+        const limitNumber = Number(limit) || 3
+        const skip = (pageNumber - 1) * limitNumber
+
+        const filter = {owner: req.user._id}
+        if(note){
+            filter.note = {$regex: note, $options: 'i'}
+        }
+        const stats = await checkInModel.aggregate([
+            {$match: filter},
+            {$group: {
+                _id: '$habit',
+                totalCheckIns: {$sum: 1}
+            }},
+            {
+                $lookup: {
+                    from: 'habits',
+                    localField: '_id',
+                    foreignField: '_id',
+                    as: 'habit'
+                }
+            },
+            {$unwind: '$habit'},
+            {
+                $project: {
+                    _id: 0,
+                    habitName: '$habit.name',
+                    habitId: '$habit._id',
+                    totalCheckIns: 1
+                }
+            },
+            {$sort: {totalCheckIns: -1, habitId: 1}},
+            {$skip: skip},
+            {$limit: limitNumber}
+        ])
+        if(!stats){
+            return res.status(404).json({
+                error: "No check-in stats available."
+            })
+        }
+        const total = await checkInModel.countDocuments(filter)
+        const totalPages = Math.ceil(total / limitNumber)
+        return res.status(200).json({
+            message: "Check-in stats fetched successfully.",
+            data: stats,
+            page: pageNumber,
+            limit: limitNumber,
+            total,
+            totalPages
+        })
+    }catch(error){
+        return res.status(500).json({
+            error: error.message
+        })
+    }
+}
+
+
 export const getSingleCheckInByOwner = async (req, res) => {
     try {
         const {id} = req.params
